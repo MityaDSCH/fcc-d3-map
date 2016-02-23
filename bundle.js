@@ -49,7 +49,7 @@
 	__webpack_require__(1);
 	__webpack_require__(5);
 
-	d3.select('body').append('h1').text('Hello World!');
+	d3.select('body').append('h1').text('Hello World!\nEmmia\'s Fat!');
 
 /***/ },
 /* 1 */
