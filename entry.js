@@ -14,7 +14,8 @@ d3.json("data/topo.json", (error, data) => {
   console.log(data);
 
   const projection = d3.geo.conicEquidistant()
-    .translate([width/2, height/2]);
+    .scale(220*(width/2000))
+    .translate([width/2, height/1.8]);
 
   const path = d3.geo.path()
     .projection(projection);
@@ -27,11 +28,7 @@ d3.json("data/topo.json", (error, data) => {
     .attr("d", path);
 
   svg.append("use")
-    .attr("class", "stroke")
-    .attr("xlink:href", "#sphere");
-
-  svg.append("use")
-    .attr("class", "fill")
+    .attr("class", "stroke fill")
     .attr("xlink:href", "#sphere");
 
   svg.append("path")
@@ -41,5 +38,6 @@ d3.json("data/topo.json", (error, data) => {
 
   svg.append("path")
       .datum(topojson.feature(data, data.objects.subunits))
+      .attr('id', 'land')
       .attr("d", path);
 });
