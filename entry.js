@@ -12,7 +12,32 @@ d3.json("data/topo.json", (error, data) => {
   if (error) return console.error(error);
 
   console.log(data);
+
+  const projection = d3.geo.conicEquidistant()
+    .scale(220*(width/2000))
+    .translate([width/2, height/1.8]);
+
+  const path = d3.geo.path()
+    .projection(projection);
+
+  const graticule = d3.geo.graticule();
+
+  svg.append("defs").append("path")
+    .datum({type: "Sphere"})
+    .attr("id", "sphere")
+    .attr("d", path);
+
+  svg.append("use")
+    .attr("class", "stroke fill")
+    .attr("xlink:href", "#sphere");
+
+  svg.append("path")
+    .datum(graticule)
+    .attr("class", "graticule")
+    .attr("d", path);
+
   svg.append("path")
       .datum(topojson.feature(data, data.objects.subunits))
-      .attr("d", d3.geo.path().projection(d3.geo.conicEquidistant()));
+      .attr('id', 'land')
+      .attr("d", path);
 });

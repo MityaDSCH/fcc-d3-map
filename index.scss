@@ -1,5 +1,40 @@
+$map-col-primary: #444;
+$map-col-secondary: #9bd2ff;
+
 body {
   margin: 0;
 
   background-color: lightgray;
+  font-family: 'Roboto';
+}
+
+#title {
+  height: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-weight: 900;
+}
+
+#land {
+  fill: $map-col-primary;
+}
+
+.stroke {
+  fill: none;
+  stroke: $map-col-primary;
+  stroke-width: 3px;
+}
+
+.fill {
+  fill: $map-col-secondary;
+}
+
+.graticule {
+  fill: none;
+  stroke: $map-col-primary;
+  stroke-width: .5px;
+  stroke-opacity: 1;
 }
