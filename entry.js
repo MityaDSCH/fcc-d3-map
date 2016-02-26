@@ -9,7 +9,7 @@ const svg = d3.select('body').append('svg')
   .attr('height', height);
 
 d3.json('data/topoMap.json', (err, map) => {
-  d3.json('data/topoMeteor.json', (err, meteors) => {
+  d3.json('data/topoMeteor.json', (err, meteorData) => {
     // console.log(map, meteors);
 
     // ------------------------------------------------------------------------
@@ -50,7 +50,7 @@ d3.json('data/topoMap.json', (err, map) => {
     const mapFeatures = topojson.feature(map, map.objects.subunits);
 
     svg.append("path")
-        .datum(topojson.feature(map, map.objects.subunits))
+        .datum(mapFeatures)
         .attr('id', 'land')
         .attr("d", path);
 
@@ -58,8 +58,26 @@ d3.json('data/topoMap.json', (err, map) => {
     // Draw meteors
     // ------------------------------------------------------------------------
 
-    const meteorFeatures = topojson.feature(meteors, meteors.objects.geoMeteor);
-    console.log(mapFeatures, meteorFeatures);
+    const meteors = topojson.feature(meteorData, meteorData.objects.geoMeteor)
+                                   .features;
+    console.log(mapFeatures, meteors);
+
+    const massExtent = d3.extent(meteors, (meteor) => parseInt(meteor.properties.mass));
+    const massScale = d3.scale.pow().exponent(.4)
+      .domain(massExtent)
+      .range([2, width/40]);
+
+    console.log(massExtent, massScale(massExtent[0]), massScale(massExtent[1]));
+    svg.selectAll('.meteor')
+      .data(meteors)
+      .enter()
+        .append('circle')
+          .attr('transform', (d) =>
+            'translate(' + projection(d.geometry.coordinates) + ')'
+          )
+          .attr('r', (d) => massScale(d.properties.mass))
+          .attr('opacity', .5)
+          .attr('fill', '#666633');
 
   })
 });
