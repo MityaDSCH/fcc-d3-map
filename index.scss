@@ -2,4 +2,23 @@ body {
   margin: 0;
 
   background-color: lightgray;
+
+  shape-rendering: crisp-edges;
+}
+
+.stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.fill {
+  fill: #9bd2ff;
+}
+
+.graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: .5px;
+  stroke-opacity: .5;
 }
