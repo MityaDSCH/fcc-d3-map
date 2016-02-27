@@ -10,7 +10,6 @@ const svg = d3.select('body').append('svg')
 
 d3.json('data/topoMap.json', (err, map) => {
   d3.json('data/topoMeteor.json', (err, meteorData) => {
-    // console.log(map, meteors);
 
     // ------------------------------------------------------------------------
     // Define projection
@@ -67,7 +66,6 @@ d3.json('data/topoMap.json', (err, map) => {
       if (massA < massB) return 1;
       return 0;
     })
-    console.log(mapFeatures, meteors);
 
     const massExtent = d3.extent(meteors, (meteor) => parseInt(meteor.properties.mass));
     const massScale = d3.scale.pow().exponent(.4)
@@ -76,10 +74,19 @@ d3.json('data/topoMap.json', (err, map) => {
 
     // colorbrewer YlOrRd
     const colors = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#b10026'];
-    // const colors = ['#ffffd9','#edf8b1','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
     const colorScale = d3.scale.quantile()
       .domain([massExtent[0], massExtent[1]/100000])
       .range(colors);
+
+    // initialize Tooltip
+    const tip = d3.tip().attr('class', 'd3-tip').html((d) => {
+      const props = d.properties;
+      return ('<h2 id="name">' + props.name + '</h2>' +
+        '<p>Mass: ' + props.mass + '</p>' +
+        '<p>Year: ' + new Date(props.year).getFullYear() + '</p>'
+      );
+    })
+    svg.call(tip);
 
     svg.selectAll('.meteor')
       .data(meteors)
@@ -90,7 +97,12 @@ d3.json('data/topoMap.json', (err, map) => {
           )
           .attr('r', (d) => massScale(d.properties.mass))
           .attr('opacity', .5)
-          .attr('fill', (d) => colorScale(Math.sqrt(d.properties.mass)));
+          .attr('fill', (d) => colorScale(Math.sqrt(d.properties.mass)))
+          .on('mouseover', (d) => {
+            tip.show(d);
+            d3.select('#name').style('color', colorScale(Math.sqrt(d.properties.mass)));
+          })
+          .on('mouseout', tip.hide);
 
   })
 });
