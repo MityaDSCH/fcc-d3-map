@@ -60,6 +60,13 @@ d3.json('data/topoMap.json', (err, map) => {
 
     const meteors = topojson.feature(meteorData, meteorData.objects.geoMeteor)
                                    .features;
+    meteors.sort((a, b) => {
+      const massA = parseInt(a.properties.mass);
+      const massB = parseInt(b.properties.mass);
+      if (massA > massB) return -1;
+      if (massA < massB) return 1;
+      return 0;
+    })
     console.log(mapFeatures, meteors);
 
     const massExtent = d3.extent(meteors, (meteor) => parseInt(meteor.properties.mass));
@@ -67,7 +74,13 @@ d3.json('data/topoMap.json', (err, map) => {
       .domain(massExtent)
       .range([2, width/40]);
 
-    console.log(massExtent, massScale(massExtent[0]), massScale(massExtent[1]));
+    // colorbrewer YlOrRd
+    const colors = ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#b10026'];
+    // const colors = ['#ffffd9','#edf8b1','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84'];
+    const colorScale = d3.scale.quantile()
+      .domain([massExtent[0], massExtent[1]/100000])
+      .range(colors);
+
     svg.selectAll('.meteor')
       .data(meteors)
       .enter()
@@ -77,7 +90,7 @@ d3.json('data/topoMap.json', (err, map) => {
           )
           .attr('r', (d) => massScale(d.properties.mass))
           .attr('opacity', .5)
-          .attr('fill', '#666633');
+          .attr('fill', (d) => colorScale(Math.sqrt(d.properties.mass)));
 
   })
 });
